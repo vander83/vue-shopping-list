@@ -1,5 +1,9 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+
+onMounted(() => {
+  getItemsFromStorage();
+});
 
 const items = ref([]);
 
@@ -14,9 +18,23 @@ const clearInput = () => {
   newItemName.value = '';
 };
 
+const getItemsFromStorage = () => {
+  const itemsFromStorage = localStorage.getItem('items');
+  if (itemsFromStorage) {
+    items.value = JSON.parse(itemsFromStorage);
+  }
+};
+
+const addToLocalStorage = () => {
+  localStorage.setItem('items', JSON.stringify(items.value));
+};
+
 const addItem = (newItemName) => {
   generateUniqueId();
-  console.log(`id:${uniqueId.value} name: ${newItemName}`);
+  items.value.push({ id: uniqueId.value, name: newItemName });
+  console.log(items.value);
+  addToLocalStorage();
+  getItemsFromStorage();
   clearInput();
 };
 </script>
@@ -72,19 +90,12 @@ input {
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #fff;
-}
-
-.button {
-  padding: 10px 20px;
-  border-radius: 5px;
-  border: 1px solid #fff;
-  background-color: transparent;
+  background-color: #394149;
   color: #fff;
 }
 
-.button:hover {
-  background-color: #fff;
-  color: #333;
+::placeholder {
+  color: #e4e4e4;
 }
 
 .items {
