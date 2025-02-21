@@ -25,17 +25,36 @@ const getItemsFromStorage = () => {
   }
 };
 
-const addToLocalStorage = () => {
+const updateLocalStorage = () => {
   localStorage.setItem('items', JSON.stringify(items.value));
 };
 
 const addItem = (newItemName) => {
   generateUniqueId();
-  items.value.push({ id: uniqueId.value, name: newItemName });
+  items.value.push({ id: uniqueId.value, name: newItemName, checked: false });
   console.log(items.value);
-  addToLocalStorage();
+  updateLocalStorage();
   getItemsFromStorage();
   clearInput();
+};
+
+const checkItem = (id) => {
+  const item = items.value.find((item) => item.id === id);
+  item.checked = !item.checked;
+  updateLocalStorage();
+  getItemsFromStorage();
+};
+
+const deleteItem = (id) => {
+  items.value = items.value.filter((item) => item.id !== id);
+  updateLocalStorage();
+  getItemsFromStorage();
+};
+
+const clearList = () => {
+  items.value = [];
+  updateLocalStorage();
+  getItemsFromStorage();
 };
 </script>
 
@@ -47,19 +66,20 @@ const addItem = (newItemName) => {
       <input type="text" placeholder="Add item" v-model="newItemName" />
       <button class="button">Add</button>
     </form>
-
-    <div class="filter-container">
+    
+    <!-- <div class="filter-container">
       <input type="text" placeholder="Filter items" />
-    </div>
-
-    <ul class="items">
+    </div> -->
+    
+    <TransitionGroup name="list" tag="ul" class="items">
       <li class="item" v-for="item in items" :key="item.id">
+        <input type="checkbox" name="check" id="check" v-model="item.checked" @click="checkItem(item.id)"/>
         <span class="item-name">{{ item.name }}</span>
-        <button class="button delete-button">Delete</button>
+        <button class="button delete-button" @click="deleteItem(item.id)">Delete</button>
       </li>
-    </ul>
+    </TransitionGroup>
 
-    <div class="clear-all-container">
+    <div class="clear-all-container" @click="clearList">
       <button class="button">Clear All</button>
     </div>
   </div>
@@ -72,11 +92,12 @@ const addItem = (newItemName) => {
   margin: 0 auto;
   padding: 20px;
   display: grid;
-  grid-template-rows: auto auto auto 1fr auto;
+  grid-template-rows: auto auto 1fr auto;
   align-content: start;
   gap: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  background-color: #262b30;
 }
 
 .add-item-container, .filter-container, .clear-all-container {
@@ -94,6 +115,11 @@ input {
   color: #fff;
 }
 
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+
 ::placeholder {
   color: #e4e4e4;
 }
@@ -103,11 +129,13 @@ input {
   align-content: start;
   gap: 10px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .item {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
   align-items: center;
   padding: 10px;
   border: 1px solid #ccc;
@@ -120,5 +148,16 @@ input {
 
 .clear-all-container  button {
   width: 100%;
+}
+
+/* Animations & Transitions */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 </style>
