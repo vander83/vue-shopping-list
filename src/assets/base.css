@@ -21,10 +21,25 @@ a {
   text-decoration: none;
 }
 
+.button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: 1px solid #fff;
+  background-color: #262b30;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  background-color: #fff;
+  color: #262b30;
+}
+
 body {
   min-height: 100vh;
   color: #fff;
-  background: #333;
+  background: #262b30;
   transition:
     color 0.5s,
     background-color 0.5s;
