@@ -39,7 +39,7 @@ a {
 body {
   min-height: 100vh;
   color: #fff;
-  background: #262b30;
+  background: #2b3744;
   transition:
     color 0.5s,
     background-color 0.5s;
