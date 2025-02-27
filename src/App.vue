@@ -188,6 +188,11 @@ input {
   background-color: transparent;
 }
 
+.add-button:disabled {
+  background-color: #666;
+  border-color: #666;
+}
+
 .add-button img {
   background: transparent;
 }
