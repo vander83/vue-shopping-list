@@ -104,7 +104,7 @@ const clearList = () => {
 <style scoped>
 .shopping-list {
   max-width: 600px;
-  height: calc(100dvh - 40px);
+  height: calc(100vh - 40px);
   margin: 0 auto;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
