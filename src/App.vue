@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import ListItem from './components/ListItem.vue';
 
 onMounted(() => {
   getItemsFromStorage();
@@ -19,20 +20,20 @@ const clearInput = () => {
 };
 
 const getItemsFromStorage = () => {
-  const itemsFromStorage = localStorage.getItem('items');
+  const itemsFromStorage = localStorage.getItem('shoppingItems');
   if (itemsFromStorage) {
     items.value = JSON.parse(itemsFromStorage);
   }
 };
 
 const updateLocalStorage = () => {
-  localStorage.setItem('items', JSON.stringify(items.value));
+  localStorage.setItem('shoppingItems', JSON.stringify(items.value));
 };
 
 const addItem = (newItemName) => {
   generateUniqueId();
-  items.value.push({ id: uniqueId.value, name: newItemName, checked: false });
-  console.log(items.value);
+  items.value.unshift({ id: uniqueId.value, name: newItemName, checked: false });
+  // console.log(items.value);
   updateLocalStorage();
   getItemsFromStorage();
   clearInput();
@@ -60,22 +61,37 @@ const clearList = () => {
 
 <template>
   <div class="shopping-list">
-    <h1>Shopping List</h1>
+    <header class="header">
+      <div class="logo-container">
+        <div class="logo">
+          <img src="/assets/icons/shopping-cart-icon.png" alt="logo">
+        </div>
+        <h1>Shopping List</h1>
+      </div>
 
-    <form @submit.prevent="addItem(newItemName)" class="add-item-container">
-      <input type="text" placeholder="Add item" v-model="newItemName" />
-      <button class="button">Add</button>
-    </form>
+      <form @submit.prevent="addItem(newItemName)" class="add-item-container">
+        <input type="text" placeholder="Add item" v-model="newItemName" />
+        <button class="icon-button add-button" :disabled="!newItemName" type="submit">
+          <img src="/assets/icons/plus-icon-2.svg" alt="add icon">
+        </button>
+      </form>
+    </header>
+
     
     <!-- <div class="filter-container">
       <input type="text" placeholder="Filter items" />
     </div> -->
     
     <TransitionGroup name="list" tag="ul" class="items">
-      <li class="item" v-for="item in items" :key="item.id">
+      <!-- <li class="item" v-for="item in items" :key="item.id">
         <input type="checkbox" name="check" id="check" v-model="item.checked" @click="checkItem(item.id)"/>
         <span class="item-name">{{ item.name }}</span>
-        <button class="button delete-button" @click="deleteItem(item.id)">Delete</button>
+        <button class="icon-button delete-button" @click="deleteItem(item.id)">
+          <img src="/assets/icons/plus-icon-2.svg" alt="delete icon">
+        </button>
+      </li> -->
+      <li class="item" v-for="item in items" :key="item.id">
+        <ListItem :item="item" @itemChecked="checkItem" @deleteClicked="deleteItem" />
       </li>
     </TransitionGroup>
 
@@ -88,20 +104,58 @@ const clearList = () => {
 <style scoped>
 .shopping-list {
   max-width: 600px;
-  height: calc(100vh - 80px);
+  height: calc(100vh - 40px);
   margin: 0 auto;
-  padding: 20px;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
   align-content: start;
+  gap: 10px;
+  border-radius: 10px;
+  background-color: var(--bg-color-light);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 20px 20px;
+  display: grid;
   gap: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #262b30;
+  background-color: var(--primary-color);
+  background-color: #282828;
+  border-radius: 10px 10px 0 0;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-container h1 {
+  font-weight: 600;
+  color: #fff;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #fff;
+  padding: 8px 8px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo img {
+  width: 100%;
+  height: auto;
 }
 
 .add-item-container, .filter-container, .clear-all-container {
   display: flex;
+  align-items: center;
   gap: 10px;
   width: 100%;
 }
@@ -111,17 +165,31 @@ input {
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #fff;
-  background-color: #394149;
-  color: #fff;
-}
-
-input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
+  background-color: var(--bg-color-light);
+  color: var(--text-color);
 }
 
 ::placeholder {
-  color: #e4e4e4;
+  color: var(--text-color);
+}
+
+.add-button img {
+  filter: invert(1);
+}
+
+.add-button {
+  background-color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 5px;
+  transition: all 0.2s ease;
+}
+
+.add-button:hover {
+  background-color: transparent;
+}
+
+.add-button img {
+  background: transparent;
 }
 
 .items {
@@ -130,24 +198,19 @@ input[type="checkbox"] {
   gap: 10px;
   overflow-y: auto;
   overflow-x: hidden;
-}
-
-.item {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 10px;
-  align-items: center;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  padding: 10px 20px;
 }
 
 .clear-all-container {
   align-self: end;
+  padding: 10px 20px 20px;
 }
 
 .clear-all-container  button {
   width: 100%;
+  background-color: var(--danger-color);
+  color: #fff;
+  border-color: var(--danger-color);
 }
 
 /* Animations & Transitions */
@@ -159,5 +222,12 @@ input[type="checkbox"] {
 .list-leave-to {
   opacity: 0;
   transform: translateX(30px);
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .shopping-list {
+    height: calc(100vh - 20px);
+  }
 }
 </style>

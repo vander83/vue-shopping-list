@@ -1,9 +1,22 @@
+:root {
+  --primary-color:  #ffab24;
+  --secondary-color: rgb(253, 198, 114);
+  /* --accent-color: #0067ff; */
+  --bg-color: #ecedf1;
+  --bg-color-light: #f6f7fb;
+  --text-color: #333;
+  --danger-color: #D9534F;
+  --success-color: #5CB85C;
+  --warning-color: #F0AD4E;
+}
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
   margin: 0;
   font-weight: normal;
+  outline-color: var(--primary-color);
 }
 
 ul {
@@ -24,22 +37,65 @@ a {
 .button {
   padding: 10px 20px;
   border-radius: 5px;
-  border: 1px solid #fff;
-  background-color: #262b30;
-  color: #fff;
+  border: 1px solid var(--primary-color);
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .button:hover {
   background-color: #fff;
-  color: #262b30;
+  color: var(--text-color);
+}
+
+.button:focus {
+  outline-color: var(--primary-color);
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  height: 34px;
+  width: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-button:focus {
+  outline-color: var(--primary-color);
+}
+
+
+.icon-button img {
+  max-width: 100%;
+  max-height: 100%;
+  transition: all 0.2s ease;
+}
+
+.icon-button:hover img {
+  transform: scale(1.1);
+}
+
+.icon-button:disabled {
+  cursor: not-allowed;
+}
+
+.icon-button:disabled img {
+  opacity: 0.5;
+}
+
+.icon-button:disabled:hover img {
+  transform: none;
 }
 
 body {
   min-height: 100vh;
-  color: #fff;
-  background: #2b3744;
+  color: var(--text-color);
+  background: var(--bg-color);
   transition:
     color 0.5s,
     background-color 0.5s;
